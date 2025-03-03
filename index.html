@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CSE 160: Assignment 4 - Lighting</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #fff;
+      color: #333;
+      margin: 40px;
+    }
+    canvas {
+      display: block;
+      margin: 0 auto 20px;
+      border: 1px solid #ccc;
+    }
+    h1 {
+      text-align: center;
+    }
+    /* Container for two columns */
+    .controls-container {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .left-column, .right-column {
+      flex: 1;
+      min-width: 300px;
+      margin: 10px;
+    }
+    .control-group {
+      margin-bottom: 15px;
+    }
+    .control-group label {
+      display: inline-block;
+      width: 100px;
+      font-weight: bold;
+    }
+    .control-group button,
+    .control-group input[type="range"] {
+      margin: 0 5px 5px 0;
+    }
+    p.note {
+      text-align: center;
+      font-style: italic;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body onload="main()">
+  <canvas id="webgl" width="1280" height="720">
+    Your browser does not support the canvas element.
+  </canvas>
+  
+  <p id="numdot">XXX</p>
+  
+  <h1>CSE 160: Assignment 4 - Lighting</h1>
+  
+  <div class="controls-container">
+    <div class="left-column">
+      <div class="control-group">
+        <label>Normals:</label>
+        <button id="normalOn">Normal On</button>
+        <button id="normalOff">Normal Off</button>
+      </div>
+      
+      <div class="control-group">
+        <label>Light:</label>
+        <button id="lightsOn">Lights On</button>
+        <button id="lightsOff">Lights Off</button>
+      </div>
+      
+      <div class="control-group">
+        <label>Normal Light:</label>
+        <button id="normalLightOn">Light On</button>
+        <button id="normalLightOff">Light Off</button>
+        <br>
+        Position: 
+        X <input type="range" min="-1000" max="1000" value="0" id="normalLightPositionSlideX">
+        Y <input type="range" min="-1000" max="1000" value="100" id="normalLightPositionSlideY">
+        Z <input type="range" min="-1000" max="1000" value="-200" id="normalLightPositionSlideZ">
+        <br>
+        Color: 
+        Red <input type="range" min="0" max="1" step="0.01" value="1" id="normalLightColorRedSlide">
+        Green <input type="range" min="0" max="1" step="0.01" value="1" id="normalLightColorGreenSlide">
+        Blue <input type="range" min="0" max="1" step="0.01" value="1" id="normalLightColorBlueSlide">
+        <br>
+        Animation:
+        <button id="normalLightAnimationOnButton">ON</button>
+        <button id="normalLightAnimationOffButton">OFF</button>
+      </div>
+      
+      <div class="control-group">
+        <label>Spotlight:</label>
+        <button id="spotlightOn">Light On</button>
+        <button id="spotlightOff">Light Off</button>
+        <br>
+        Position: 
+        X <input type="range" min="-1000" max="1000" value="0" id="spotlightPositionSlideX">
+        Y <input type="range" min="-1000" max="1000" value="100" id="spotlightPositionSlideY">
+        Z <input type="range" min="-1000" max="1000" value="-200" id="spotlightPositionSlideZ">
+        <br>
+        Direction: 
+        X <input type="range" min="-1000" max="1000" value="0" id="spotlightDirectionSlideX">
+        Y <input type="range" min="-1000" max="1000" value="100" id="spotlightDirectionSlideY">
+        Z <input type="range" min="-1000" max="1000" value="-200" id="spotlightDirectionSlideZ">
+        <br>
+        Color: 
+        Red <input type="range" min="0" max="1" step="0.01" value="1" id="spotlightColorRedSlide">
+        Green <input type="range" min="0" max="1" step="0.01" value="1" id="spotlightColorGreenSlide">
+        Blue <input type="range" min="0" max="1" step="0.01" value="1" id="spotlightColorBlueSlide">
+        <br>
+      </div>
+    </div>
+    
+    <div class="right-column">
+      <div class="control-group">
+        <label>Cutoff Angle:</label>
+        <input type="range" min="0" max="90" value="20" id="spotlightCutoffAngleSlide">
+      </div>
+      <div class="control-group">
+        <label>Camera Angle:</label>
+        <input type="range" min="0" max="90" value="5" id="angleSlide">
+      </div>
+      <div class="control-group">
+        <label>Left Leg:</label>
+        <input type="range" min="-45" max="45" value="0" id="RightLegSlide">
+        <button id="animationRightLegOnButton">ON</button>
+        <button id="animationRightLegOffButton">OFF</button>
+      </div>
+      
+      <div class="control-group">
+        <label>Left Paw:</label>
+        <input type="range" min="-45" max="45" value="0" id="RightPawSlide">
+        <button id="animationRightLegPawOnButton">ON</button>
+        <button id="animationRightLegPawOffButton">OFF</button>
+      </div>
+      
+      <div class="control-group">
+        <label>Right Leg:</label>
+        <input type="range" min="-45" max="45" value="0" id="LeftLegSlide">
+        <button id="animationLeftLegOnButton">ON</button>
+        <button id="animationLeftLegOffButton">OFF</button>
+      </div>
+      
+      <div class="control-group">
+        <label>Right Paw:</label>
+        <input type="range" min="-45" max="45" value="0" id="LeftPawSlide">
+        <button id="animationLeftPawOnButton">ON</button>
+        <button id="animationLeftPawOffButton">OFF</button>
+      </div>
+      
+      <div class="control-group">
+        <label>Arm:</label>
+        <input type="range" min="-45" max="90" value="0" id="armSlide">
+        <button id="animationArmOnButton">ON</button>
+        <button id="animationArmOffButton">OFF</button>
+      </div>
+    </div>
+  </div>
+  
+  <p>
+    Nuha Fakrudeen - nfakrude@ucsc.edu
+  </p>
+  <p>
+    Grader's Note: This is a modified version of my asg 3 and asg 2 but made for asg 4.
+  </p>
+  
+  <script src="lib/webgl-utils.js"></script>
+  <script src="lib/webgl-debug.js"></script>
+  <script src="lib/cuon-utils.js"></script>
+  <script src="lib/cuon-matrix-cse160.js"></script>
+  <script src="Triangle.js"></script>
+  <script src="Cube.js"></script>
+  <script src="Prism.js"></script>
+  <script src="Sphere.js"></script>
+  <script src="Camera.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
